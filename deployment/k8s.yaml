@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inverter-sp-deployment
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inverter-sp-api
+  template:
+    metadata:
+      labels:
+        app: inverter-sp-api
+    spec:
+      containers:
+        - name: inverter-sp-api
+          image: 44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry/zim-solar-inverter-sp-api:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PROFILE
+              value: "prod"
+            - name: ALLOWED_ORIGINS
+              value: "http://localhost:3000,http://128.1.1.2:3000"
+      imagePullSecrets:
+        - name: ncr
+---
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inverter-sp-service
+  namespace: default
+spec:
+  selector:
+    app: inverter-sp-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31035
+  type: NodePort
