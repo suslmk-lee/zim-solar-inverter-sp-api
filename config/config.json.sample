@@ -1,0 +1,6 @@
+{
+  "AllowedOrigins": [
+    "http://localhost:3000",
+    "http://133.186.228.94:31030"
+  ]
+}
