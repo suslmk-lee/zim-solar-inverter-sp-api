@@ -12,7 +12,7 @@ jobs:
     env:
       IMAGE_NAME: "zim-solar-inverter-sp-api"
       REGISTRY: "44ce789b-kr1-registry.container.nhncloud.com/container-platform-registry"
-      NAMESPACE: "default"
+      NAMESPACE: "edge-test"
       DEPLOYMENT_NAME: "inverter-sp-deployment"
       CLUSTER_NAME: "dev-cluster"
       KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_DATA }}
@@ -47,4 +47,4 @@ jobs:
 
       - name: Apply Kubernetes Deployment
         run: |
-          kubectl apply -f deployment/k8s.yaml
+          kubectl apply -f deployment/k8s.yaml -n $NAMESPACE
