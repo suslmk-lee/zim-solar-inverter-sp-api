@@ -45,6 +45,6 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG_DATA }}
 
-      - name: Update Kubernetes Deployment
+      - name: Apply Kubernetes Deployment
         run: |
-          kubectl set image deployment/$DEPLOYMENT_NAME $DEPLOYMENT_NAME=$REGISTRY/$IMAGE_NAME:latest -n $NAMESPACE
+          kubectl apply -f deployment/k8s.yaml
