@@ -1,0 +1,82 @@
+# Git 관련 파일
+.git
+.gitignore
+.gitattributes
+
+# IDE 및 에디터 설정 파일
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS 생성 파일
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 빌드 결과물
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+*.test
+*.out
+
+# Go 관련
+vendor/
+*.mod.backup
+*.sum.backup
+
+# 로그 파일
+*.log
+
+# 임시 파일
+*.tmp
+*.temp
+
+# 문서 및 README
+README.md
+*.md
+
+# 라이센스 파일
+LICENSE
+
+# 배포 관련 파일
+deployment/
+.github/
+
+# Docker 관련
+Dockerfile
+Dockerfile_*
+docker-compose*.yml
+
+# 설정 파일 (민감한 정보 포함 가능)
+*.env
+*.env.local
+*.env.production
+config.json
+
+# 테스트 커버리지
+coverage.txt
+coverage.out
+
+# 프로젝트별 불필요한 파일
+IoT_Interface.xlsx
+*.xlsx
+*.xls
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+
+# 샘플 설정 파일
+*.sample
+config.json.sample

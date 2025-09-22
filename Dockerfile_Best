@@ -1,0 +1,62 @@
+# Go 애플리케이션을 위한 멀티스테이지 빌드
+# 1단계: 빌드 스테이지
+FROM golang:1.22-alpine AS builder
+
+# 빌드에 필요한 git 설치
+RUN apk --no-cache add git
+
+# 빌드 환경 변수 설정
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+
+# 작업 디렉토리 설정
+WORKDIR /build
+
+# 레이어 캐싱 최적화를 위해 go mod 파일을 먼저 복사
+COPY go.mod go.sum ./
+
+# 의존성 다운로드
+RUN go mod download
+
+# 최적화된 순서로 소스 코드 복사
+COPY . .
+
+# 최적화 옵션을 사용하여 애플리케이션 빌드
+RUN go build -a -installsuffix cgo -ldflags="-w -s" -o main .
+
+# 2단계: 최종 최소 이미지
+FROM alpine:latest
+
+# HTTPS 요청을 위한 ca-certificates와 타임존 데이터 설치
+RUN apk --no-cache add ca-certificates tzdata
+
+# 보안을 위한 비루트 사용자 생성
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# 빌더 스테이지에서 바이너리 복사
+COPY --from=builder /build/main .
+
+# 비루트 사용자로 소유권 변경
+RUN chown -R appuser:appgroup /app
+
+# 비루트 사용자로 전환
+USER appuser
+
+# 기본 환경 변수 설정 (런타임에 오버라이드 가능)
+ENV PROFILE=prod
+
+# 포트 노출 (애플리케이션에 맞게 조정)
+EXPOSE 8080
+
+# 헬스 체크 (애플리케이션에 맞게 엔드포인트 조정)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+
+# 메인 명령어에 ENTRYPOINT 사용
+ENTRYPOINT ["./main"]
